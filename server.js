@@ -1,30 +1,25 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
-const PORT = 5000;
-
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-// temporary memory me profile store hoga
-let profile = null;
+// ✅ Routes
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
 
-// ✅ GET profile
-app.get("/api/profile", (req, res) => {
-  if (profile) {
-    res.json(profile);
-  } else {
-    res.status(404).json({ message: "No profile found" });
-  }
+// ✅ MongoDB Connection
+mongoose.connect(
+  "mongodb+srv://sadafurooj00:ma9VfzFxGcPzkwkS@cluster01.pdbop5w.mongodb.net/finalHackathonDB?retryWrites=true&w=majority&appName=Cluster01",
+  { useNewUrlParser: true, useUnifiedTopology: true }
+)
+.then(() => console.log("✅ MongoDB connected"))
+.catch((err) => {
+  console.error("❌ MongoDB connection error:");
+  console.error(err); // 👈 pura error print hoga
 });
 
-// ✅ POST profile
-app.post("/api/profile", (req, res) => {
-  profile = req.body;
-  res.json({ message: "Profile saved successfully", profile });
-});
-
-app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
-});
+// ✅ Server
+app.listen(5000, () => console.log("🚀 Server running on port 5000"));
